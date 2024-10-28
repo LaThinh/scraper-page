@@ -1,15 +1,18 @@
 "use client";
 
+import Image from "next/image";
 import React, { useState } from "react";
 
 export default function ScraperPage() {
 	const [siteUrl, setSiteUrl] = useState("https://myblog.laquocthinh.com/");
 	const [loading, setLoading] = useState(false);
-	const [result, setResults] = useState<object>();
+	const [result, setResults] = useState<any>();
 
 	async function handleOnClick(e: any) {
 		e.preventDefault();
 		setLoading(true);
+
+		setResults(null);
 
 		const results = await fetch("/api/scraper", {
 			method: "POST",
@@ -21,8 +24,6 @@ export default function ScraperPage() {
 			.finally(() => setLoading(false));
 
 		setResults(results);
-
-		return results;
 	}
 
 	return (
@@ -58,10 +59,21 @@ export default function ScraperPage() {
 				</form>
 
 				{result && (
-					<div className="grid mt-8">
+					<div className="flex flex-col gap-10 mt-10">
 						<pre className="bg-zinc-200 text-left py-4 px-5 rounded overflow-x-auto">
 							<code>{JSON.stringify(result, undefined, 2)}</code>
 						</pre>
+
+						<div className="screen w-full">
+							<Image
+								src={result?.screenshot || "/test.png"}
+								alt="screenshot"
+								width={1920}
+								height={1080}
+								unoptimized
+								className="w-full max-h-none h-auto"
+							/>
+						</div>
 					</div>
 				)}
 			</div>
